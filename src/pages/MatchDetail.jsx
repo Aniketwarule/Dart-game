@@ -4,7 +4,6 @@ import { supabase } from '../supabase'
 import { computeStats, sortStandings, formatDate } from '../utils/gameLogic'
 import LiveLeaderboard from '../components/LiveLeaderboard'
 import MatchAnalytics from '../components/MatchAnalytics'
-
 export default function MatchDetail() {
   const { matchId } = useParams()
   const [match, setMatch] = useState(null)
@@ -12,7 +11,6 @@ export default function MatchDetail() {
   const [throws, setThrows] = useState([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('overview')  // 'overview' | 'analytics' | 'throws'
-
   useEffect(() => {
     async function load() {
       const [{ data: m }, { data: mps }, { data: trows }] = await Promise.all([
@@ -30,14 +28,11 @@ export default function MatchDetail() {
     }
     load()
   }, [matchId])
-
   if (loading) return <div className="loading-center"><div className="spinner" /><span>Loading…</span></div>
   if (!match) return <div className="empty-state"><div className="empty-state-title">Match not found</div></div>
-
   const stats = computeStats(players, throws, match)
   const sorted = sortStandings(stats)
   const rounds = Array.from({ length: match.total_rounds }, (_, i) => i + 1)
-
   return (
     <>
       <div style={{ marginBottom: 20 }}>
@@ -53,7 +48,6 @@ export default function MatchDetail() {
           </span>
         </div>
       </div>
-
       {/* Winner banner */}
       {match.status === 'finished' && sorted[0] && (
         <div className="winner-stage" style={{ marginBottom: 24 }}>
@@ -63,14 +57,12 @@ export default function MatchDetail() {
           <div className="winner-score-line">Total: <strong>{sorted[0].total} pts</strong></div>
         </div>
       )}
-
       {/* Tab switcher */}
       <div className="match-view-tabs" style={{ marginBottom: 20 }}>
         <button className={`match-view-tab ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setActiveTab('overview')} id="md-tab-overview">🏆 Overview</button>
         <button className={`match-view-tab ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')} id="md-tab-analytics">📊 Analytics</button>
         <button className={`match-view-tab ${activeTab === 'throws' ? 'active' : ''}`} onClick={() => setActiveTab('throws')} id="md-tab-throws">📝 Throw Log</button>
       </div>
-
       {/* Overview tab */}
       {activeTab === 'overview' && (
         <>
@@ -112,7 +104,6 @@ export default function MatchDetail() {
           </table>
         </div>
       </div>
-
       {/* Per-throw breakdown */}
       <div style={{ marginTop: 20 }}>
         <div className="final-standings-title">THROW DETAILS</div>
@@ -153,12 +144,10 @@ export default function MatchDetail() {
       </div>
         </>
       )}
-
       {/* Analytics tab */}
       {activeTab === 'analytics' && (
         <MatchAnalytics match={match} players={players} throws={throws} />
       )}
-
       {/* Throws log tab (old view) */}
       {activeTab === 'throws' && (
         <div style={{ marginTop: 20 }}>
