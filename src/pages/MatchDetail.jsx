@@ -77,14 +77,14 @@ export default function MatchDetail() {
       <div style={{ marginTop: 28 }}>
         <div className="final-standings-title">ROUND BY ROUND</div>
         <div className="panel" style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 15 }}>
             <thead>
               <tr>
-                <th style={{ textAlign: 'left', color: 'var(--text3)', padding: '6px 12px 10px 0', fontWeight: 700, letterSpacing: 1, fontSize: 10, textTransform: 'uppercase' }}>Player</th>
+                <th style={{ textAlign: 'left', color: 'var(--text3)', padding: '6px 12px 10px 0', fontWeight: 700, letterSpacing: 1, fontSize: 13, textTransform: 'uppercase' }}>Player</th>
                 {rounds.map(r => (
-                  <th key={r} style={{ color: 'var(--text3)', padding: '6px 8px 10px', fontWeight: 700, fontSize: 10, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 1 }}>R{r}</th>
+                  <th key={r} style={{ color: 'var(--text3)', padding: '6px 8px 10px', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', textAlign: 'center', letterSpacing: 1 }}>R{r}</th>
                 ))}
-                <th style={{ color: 'var(--accent)', padding: '6px 0 10px 8px', fontWeight: 700, fontSize: 10, textTransform: 'uppercase', textAlign: 'right', letterSpacing: 1 }}>Total</th>
+                <th style={{ color: 'var(--accent)', padding: '6px 0 10px 8px', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', textAlign: 'right', letterSpacing: 1 }}>Total</th>
               </tr>
             </thead>
             <tbody>
@@ -92,7 +92,7 @@ export default function MatchDetail() {
                 <tr key={s.player_id} style={{ borderTop: '1px solid var(--border2)' }}>
                   <td style={{ padding: '10px 12px 10px 0' }}>
                     <Link to={`/player/${s.player_id}`} style={{ fontWeight: 700, color: rank === 0 ? 'var(--gold)' : 'var(--text)', textDecoration: 'none' }}>{s.name}</Link>
-                    <span style={{ marginLeft: 6, fontSize: 10, color: 'var(--text3)' }}>{s.player_code}</span>
+                    <span style={{ marginLeft: 6, fontSize: 12, color: 'var(--text3)' }}>{s.player_code}</span>
                   </td>
                   {rounds.map(r => {
                     const sc = s.roundScores[r]
@@ -103,7 +103,7 @@ export default function MatchDetail() {
                       </td>
                     )
                   })}
-                  <td style={{ textAlign: 'right', padding: '10px 0 10px 8px', fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.3rem', color: rank === 0 ? 'var(--gold)' : 'var(--accent)', letterSpacing: 1 }}>
+                  <td style={{ textAlign: 'right', padding: '10px 0 10px 8px', fontFamily: 'Bebas Neue, sans-serif', fontSize: '1.6rem', color: rank === 0 ? 'var(--gold)' : 'var(--accent)', letterSpacing: 1 }}>
                     {s.total}
                   </td>
                 </tr>
@@ -128,23 +128,23 @@ export default function MatchDetail() {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                   {myThrows.map((t, i) => (
                     <div key={t.id} style={{
-                      padding: '4px 10px',
+                      padding: '6px 12px',
                       borderRadius: 6,
                       background: 'var(--bg)',
                       border: '1px solid var(--border)',
-                      fontSize: 11,
+                      fontSize: 14,
                       fontWeight: 700,
                       color: t.total_score >= 18 ? 'var(--green)' : t.total_score >= 10 ? 'var(--text)' : 'var(--text3)',
                       textAlign: 'center',
                     }}>
-                      <div style={{ fontSize: 9, color: 'var(--text3)', marginBottom: 1 }}>R{t.round_num}T{t.throw_num}</div>
+                      <div style={{ fontSize: 12, color: 'var(--text3)', marginBottom: 2 }}>R{t.round_num}T{t.throw_num}</div>
                       {t.total_score}
                       {match.darts_per_throw === 2 && (
-                        <div style={{ fontSize: 8, color: 'var(--text3)' }}>{t.dart1_score}+{t.dart2_score ?? 0}</div>
+                        <div style={{ fontSize: 11, color: 'var(--text3)' }}>{t.dart1_score}+{t.dart2_score ?? 0}</div>
                       )}
                     </div>
                   ))}
-                  {myThrows.length === 0 && <span style={{ color: 'var(--text3)', fontSize: 11 }}>No throws recorded</span>}
+                  {myThrows.length === 0 && <span style={{ color: 'var(--text3)', fontSize: 14 }}>No throws recorded</span>}
                 </div>
               </div>
             )
