@@ -15,31 +15,41 @@ const MILESTONE_CONFIG = {
 
 export default function MilestoneOverlay({ type, playerName, extra, onDone }) {
   const cfg = MILESTONE_CONFIG[type] || MILESTONE_CONFIG.milestone_50
-  const canvasRef = useRef(null)
+  const isWinner = type === 'match_winner'
 
   useEffect(() => {
     const canvas = document.getElementById('confetti-canvas')
     if (!canvas) return
     const myConfetti = confetti.create(canvas, { resize: true, useWorker: true })
 
-    // fire confetti
-    const burst = () => {
+    const burst = (opts = {}) => {
       myConfetti({
-        particleCount: type === 'match_winner' ? 200 : 80,
-        spread: 100,
-        startVelocity: 45,
-        origin: { x: 0.5, y: 0.3 },
+        particleCount: isWinner ? 160 : 80,
+        spread: isWinner ? 120 : 100,
+        startVelocity: isWinner ? 55 : 45,
+        origin: opts.origin || { x: 0.5, y: 0.3 },
         colors: cfg.confettiColors,
-        ticks: 200,
+        ticks: isWinner ? 350 : 200,
+        gravity: 0.8,
+        scalar: isWinner ? 1.2 : 1,
+        ...opts
       })
     }
+
+    // Initial burst
     burst()
-    if (type === 'match_winner') {
-      setTimeout(burst, 400)
-      setTimeout(burst, 800)
+
+    if (isWinner) {
+      // Multiple dramatic bursts for winner
+      setTimeout(() => burst({ origin: { x: 0.2, y: 0.4 }, spread: 80 }), 300)
+      setTimeout(() => burst({ origin: { x: 0.8, y: 0.4 }, spread: 80 }), 500)
+      setTimeout(() => burst({ origin: { x: 0.5, y: 0.2 }, spread: 140 } ), 800)
+      setTimeout(() => burst({ origin: { x: 0.3, y: 0.5 }, spread: 80 }), 1200)
+      setTimeout(() => burst({ origin: { x: 0.7, y: 0.5 }, spread: 80 }), 1500)
+      setTimeout(() => burst({ spread: 180, particleCount: 200 }), 2000)
     }
 
-    const timer = setTimeout(onDone, type === 'match_winner' ? 3000 : 1800)
+    const timer = setTimeout(onDone, isWinner ? 6000 : 1800)
     return () => {
       clearTimeout(timer)
       myConfetti.reset()
@@ -48,15 +58,32 @@ export default function MilestoneOverlay({ type, playerName, extra, onDone }) {
 
   return (
     <>
-      <canvas id="confetti-canvas" style={{ position:'fixed',inset:0,pointerEvents:'none',zIndex:1001,width:'100%',height:'100%' }} />
-      <div className="milestone-overlay" onClick={onDone}>
-        <div className="milestone-card">
-          <span className="milestone-emoji">{cfg.emoji}</span>
-          <div className="milestone-label">{cfg.label}</div>
-          <div className="milestone-title" style={{ color: cfg.color }}>{playerName}</div>
-          {extra && <div className="milestone-sub">{extra}</div>}
+      <canvas
+        id="confetti-canvas"
+        style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 1003, width: '100%', height: '100%' }}
+      />
+
+      {isWinner ? (
+        /* ── Full-screen Winner Celebration ── */
+        <div className="winner-celebration-overlay" onClick={onDone}>
+          <div className="wc-rays" />
+          <div className="wc-trophy">🏆</div>
+          <div className="wc-label">Match Winner</div>
+          <div className="wc-name">{playerName}</div>
+          {extra && <div className="wc-score">{extra}</div>}
+          <div className="wc-dismiss">TAP TO CONTINUE</div>
         </div>
-      </div>
+      ) : (
+        /* ── Regular milestone card ── */
+        <div className="milestone-overlay" onClick={onDone}>
+          <div className="milestone-card">
+            <span className="milestone-emoji">{cfg.emoji}</span>
+            <div className="milestone-label">{cfg.label}</div>
+            <div className="milestone-title" style={{ color: cfg.color }}>{playerName}</div>
+            {extra && <div className="milestone-sub">{extra}</div>}
+          </div>
+        </div>
+      )}
     </>
   )
 }

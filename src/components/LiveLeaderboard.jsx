@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { sortStandings, getTiebreakNote } from '../utils/gameLogic'
 
 export default function LiveLeaderboard({ stats, match, currentRound, activePlayerId }) {
@@ -46,7 +47,12 @@ export default function LiveLeaderboard({ stats, match, currentRound, activePlay
               {/* info */}
               <div className="lb-info">
                 <div className="lb-player-name">
-                  {s.name}
+                  <Link
+                    to={`/player/${s.player_id}`}
+                    style={{ color: 'inherit', textDecoration: 'none' }}
+                  >
+                    {s.name}
+                  </Link>
                   {isActive && <span className="lb-throwing-tag">Throwing</span>}
                 </div>
                 <div className="lb-player-id">{s.player_code}</div>

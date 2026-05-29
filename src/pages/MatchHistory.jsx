@@ -55,7 +55,7 @@ export default function MatchHistory() {
   return (
     <>
       <div className="page-title">MATCH HISTORY</div>
-      <div className="page-sub">All played matches · click to view full replay</div>
+      <div className="page-sub" style={{ marginBottom: 20 }}>All played matches · tap to view full replay</div>
 
       {matches.length === 0 && (
         <div className="empty-state">

@@ -1,5 +1,5 @@
-import { useEffect, useState, useMemo } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../supabase'
 import { formatDate } from '../utils/gameLogic'
 
@@ -12,6 +12,7 @@ function stdDev(arr) {
 
 export default function PlayerProfile() {
   const { playerId } = useParams()
+  const navigate = useNavigate()
   const [player, setPlayer] = useState(null)
   const [matches, setMatches] = useState([])
   const [throws, setThrows] = useState([])
@@ -40,9 +41,9 @@ export default function PlayerProfile() {
     load()
   }, [playerId])
 
-  const stats = useMemo(() => {
+  const stats = (() => {
     if (!player) return null
-    
+
     const throwScores = throws.map(t => t.total_score)
     const dartScores = throws.flatMap(t => {
       const d = [t.dart1_score]
@@ -51,12 +52,12 @@ export default function PlayerProfile() {
     })
 
     const total = throwScores.reduce((s, v) => s + v, 0)
-    const wins = matches.filter(m => m.winner_player_id === playerId).length
+    const wins = matches.filter(m => m.winner_player_id === player.id).length
     const matchesPlayed = matches.length
     const winRate = matchesPlayed > 0 ? Math.round((wins / matchesPlayed) * 100) : 0
     const perfect10s = dartScores.filter(d => d === 10).length
     const avgPerThrow = throws.length ? parseFloat((total / throws.length).toFixed(1)) : 0
-    
+
     // Best Round
     const roundGroups = {}
     for (const t of throws) {
@@ -84,20 +85,31 @@ export default function PlayerProfile() {
       consistency: stdDev(throwScores),
       buckets, totalDarts: dartScores.length
     }
-  }, [player, matches, throws, playerId])
+  })()
 
   if (loading) return <div className="loading-center"><div className="spinner" /></div>
   if (!player) return <div className="empty-state"><div className="empty-state-title">Player Not Found</div></div>
 
   return (
-    <div style={{ maxWidth: 800, margin: '0 auto', paddingBottom: 40 }}>
-      <div style={{ marginBottom: 32 }}>
-        <div style={{ fontSize: 12, color: 'var(--text3)', letterSpacing: 2, textTransform: 'uppercase', fontWeight: 700, marginBottom: 8 }}>Player Profile</div>
-        <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: '4rem', color: 'var(--text)', lineHeight: 1, letterSpacing: 2 }}>{player.name}</div>
-        <div style={{ fontSize: 14, color: 'var(--accent)', fontWeight: 700, marginTop: 4 }}>{player.player_code}</div>
+    <div style={{ maxWidth: 800, margin: '0 auto', paddingBottom: 48 }}>
+      {/* ── Back button ── */}
+      <button
+        className="btn btn-ghost"
+        onClick={() => navigate(-1)}
+        style={{ marginBottom: 20, display: 'inline-flex', alignItems: 'center', gap: 6 }}
+        id="player-back-btn"
+      >
+        ← Back
+      </button>
+
+      {/* ── Player header ── */}
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ fontSize: 11, color: 'var(--text3)', letterSpacing: 2, textTransform: 'uppercase', fontWeight: 700, marginBottom: 6 }}>Player Profile</div>
+        <div style={{ fontFamily: 'Bebas Neue, sans-serif', fontSize: 'clamp(2.4rem, 10vw, 4rem)', color: 'var(--text)', lineHeight: 1, letterSpacing: 2 }}>{player.name}</div>
+        <div style={{ fontSize: 13, color: 'var(--accent)', fontWeight: 700, marginTop: 4 }}>{player.player_code}</div>
       </div>
 
-      {stats.matchesPlayed === 0 ? (
+      {!stats || stats.matchesPlayed === 0 ? (
         <div className="empty-state"><div className="empty-state-title">No completed matches yet</div></div>
       ) : (
         <>
@@ -113,7 +125,7 @@ export default function PlayerProfile() {
               <div className="an-stat-unit">matches</div>
               <div className="an-stat-label">Played</div>
             </div>
-            <div className="an-stat-tile">
+            <div className="an-stat-tile accent">
               <div className="an-stat-value">{stats.winRate}%</div>
               <div className="an-stat-unit">{stats.wins}W {stats.matchesPlayed - stats.wins}L</div>
               <div className="an-stat-label">Win Rate</div>
@@ -160,21 +172,34 @@ export default function PlayerProfile() {
             {matches.slice(0, 5).map(m => {
               const isWinner = m.winner_player_id === player.id
               return (
-                <Link key={m.id} to={`/history/${m.id}`} className="panel" style={{ display: 'flex', alignItems: 'center', gap: 16, textDecoration: 'none' }}>
-                  <div style={{ fontSize: '2rem', width: 40, textAlign: 'center' }}>
+                <Link
+                  key={m.id}
+                  to={`/history/${m.id}`}
+                  className="match-card"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <div style={{ fontSize: '1.6rem', width: 36, textAlign: 'center', flexShrink: 0 }}>
                     {isWinner ? '🏆' : '🎯'}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: 16, fontWeight: 700, color: 'var(--text)' }}>
+                  <div className="match-card-info">
+                    <div className="match-card-title">
                       {m.title || `Match #${m.id}`}
                     </div>
-                    <div style={{ fontSize: 12, color: 'var(--text3)' }}>
-                      {formatDate(m.created_at)} · {m.total_rounds} Rounds
+                    <div className="match-card-meta">
+                      {formatDate(m.created_at)} · {m.total_rounds} rounds
                     </div>
                   </div>
-                  <div className={`status-badge finished`} style={{ background: isWinner ? 'var(--gold)' : 'var(--surface2)', color: isWinner ? '#000' : 'var(--text2)' }}>
-                    {isWinner ? 'WON' : 'LOST'}
-                  </div>
+                  <span
+                    className="status-badge finished"
+                    style={{
+                      background: isWinner ? 'var(--gold)' : 'var(--surface2)',
+                      color: isWinner ? '#000' : 'var(--text2)',
+                      border: isWinner ? '1px solid rgba(255,215,0,0.4)' : undefined,
+                      flexShrink: 0,
+                    }}
+                  >
+                    {isWinner ? '🏆 WON' : 'LOST'}
+                  </span>
                 </Link>
               )
             })}

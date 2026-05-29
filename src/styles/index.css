@@ -46,7 +46,7 @@ body {
    LAYOUT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
 .main-content {
-  padding: 24px 16px 64px;
+  padding: 20px 16px 80px;
   max-width: 1100px;
   margin: 0 auto;
 }
@@ -592,7 +592,7 @@ body:has(.cyber-theme) {
 .game-layout {
   display: grid;
   grid-template-columns: 360px 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: auto auto 1fr;
   gap: 14px;
 }
 
@@ -603,30 +603,30 @@ body:has(.cyber-theme) {
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 14px 20px;
+  gap: 10px;
+  padding: 12px 16px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
 }
-.topbar-badges { display: flex; align-items: center; gap: 20px; }
+.topbar-badges { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
 .topbar-badge { display: flex; flex-direction: column; gap: 1px; }
 .topbar-badge .label {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 2.5px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: var(--text3);
 }
 .topbar-badge .value {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.7rem;
+  font-size: 1.5rem;
   color: var(--accent);
   line-height: 1;
   letter-spacing: 2px;
 }
 .topbar-divider {
-  width: 1px; height: 36px;
+  width: 1px; height: 30px;
   background: var(--border);
 }
 .topbar-match-title {
@@ -639,7 +639,7 @@ body:has(.cyber-theme) {
   display: flex;
   align-items: center;
   gap: 7px;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -982,6 +982,12 @@ body:has(.cyber-theme) {
   white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   letter-spacing: 0.2px;
 }
+.lb-player-name a {
+  color: inherit;
+  text-decoration: none;
+  transition: color .15s;
+}
+.lb-player-name a:hover { color: var(--accent); }
 .lb-row.is-active .lb-player-name { color: var(--accent); }
 .lb-row.rank-1 .lb-player-name { color: var(--gold); }
 .lb-player-id { font-size: 14px; color: var(--text3); font-weight: 600; }
@@ -1133,8 +1139,8 @@ body:has(.cyber-theme) {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.75);
-  backdrop-filter: blur(8px);
+  background: rgba(0,0,0,0.82);
+  backdrop-filter: blur(10px);
   animation: overlay-in .25s ease;
 }
 @keyframes overlay-in {
@@ -1143,31 +1149,135 @@ body:has(.cyber-theme) {
 }
 .milestone-card {
   text-align: center;
-  padding: 48px 56px;
+  padding: 40px 40px;
+  max-width: 90vw;
   animation: milestone-pop .4s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 @keyframes milestone-pop {
   from { transform: scale(0.7); opacity: 0; }
   to   { transform: scale(1); opacity: 1; }
 }
-.milestone-emoji { font-size: 5rem; margin-bottom: 12px; display: block; }
+.milestone-emoji { font-size: clamp(3.5rem, 12vw, 6rem); margin-bottom: 12px; display: block; }
 .milestone-label {
-  font-size: 14px; font-weight: 700;
+  font-size: clamp(11px, 3vw, 14px); font-weight: 700;
   letter-spacing: 4px; text-transform: uppercase;
   color: var(--text3); margin-bottom: 8px;
 }
 .milestone-title {
   font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(2rem, 8vw, 4rem);
+  font-size: clamp(2rem, 10vw, 4.5rem);
   letter-spacing: 4px;
   color: var(--accent);
   text-shadow: 0 0 60px rgba(200,255,0,0.5);
   line-height: 1;
 }
 .milestone-sub {
-  font-size: 17px; color: var(--text2);
+  font-size: clamp(14px, 4vw, 18px); color: var(--text2);
   margin-top: 10px; font-weight: 600;
 }
+
+/* ── Winner Celebration overlay (full-screen spectacle) ── */
+.winner-celebration-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1002;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 50% 30%, rgba(200,255,0,0.12) 0%, rgba(0,0,0,0.94) 70%);
+  backdrop-filter: blur(16px);
+  animation: overlay-in .3s ease;
+  cursor: pointer;
+  padding: 20px;
+  text-align: center;
+}
+.wc-rays {
+  position: absolute;
+  inset: 0;
+  background: conic-gradient(
+    from 0deg,
+    rgba(200,255,0,0.04) 0deg,
+    transparent 30deg,
+    rgba(200,255,0,0.04) 60deg,
+    transparent 90deg,
+    rgba(200,255,0,0.04) 120deg,
+    transparent 150deg,
+    rgba(200,255,0,0.04) 180deg,
+    transparent 210deg,
+    rgba(200,255,0,0.04) 240deg,
+    transparent 270deg,
+    rgba(200,255,0,0.04) 300deg,
+    transparent 330deg,
+    rgba(200,255,0,0.04) 360deg
+  );
+  animation: rays-spin 20s linear infinite;
+  pointer-events: none;
+}
+@keyframes rays-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.wc-trophy {
+  font-size: clamp(5rem, 18vw, 9rem);
+  animation: trophy-bounce 0.6s cubic-bezier(0.34, 1.8, 0.64, 1) forwards, trophy-float 3s ease-in-out 0.6s infinite;
+  filter: drop-shadow(0 0 40px rgba(255,215,0,0.6));
+  margin-bottom: 16px;
+  position: relative;
+  z-index: 2;
+}
+@keyframes trophy-bounce {
+  from { transform: scale(0) rotate(-20deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+@keyframes trophy-float {
+  0%,100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-12px) scale(1.03); }
+}
+.wc-label {
+  font-size: clamp(12px, 3vw, 15px);
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 12px;
+  position: relative; z-index: 2;
+}
+.wc-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 14vw, 7rem);
+  letter-spacing: 6px;
+  color: var(--gold);
+  line-height: 1;
+  text-shadow: 0 0 80px rgba(255,215,0,0.7), 0 0 160px rgba(255,215,0,0.3);
+  animation: name-glow 1.5s ease-in-out infinite alternate;
+  position: relative; z-index: 2;
+  margin-bottom: 8px;
+}
+@keyframes name-glow {
+  from { text-shadow: 0 0 40px rgba(255,215,0,0.5), 0 0 80px rgba(255,215,0,0.2); }
+  to { text-shadow: 0 0 80px rgba(255,215,0,0.9), 0 0 160px rgba(255,215,0,0.5), 0 4px 40px rgba(200,255,0,0.4); }
+}
+.wc-score {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.5rem, 6vw, 2.5rem);
+  color: var(--accent);
+  letter-spacing: 4px;
+  position: relative; z-index: 2;
+  margin-bottom: 24px;
+}
+.wc-dismiss {
+  font-size: clamp(12px, 3vw, 14px);
+  color: var(--text3);
+  letter-spacing: 2px;
+  position: relative; z-index: 2;
+  animation: wc-dismiss-pulse 2s ease infinite;
+}
+@keyframes wc-dismiss-pulse {
+  0%,100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
 #confetti-canvas {
   position: fixed;
   inset: 0;
@@ -1507,8 +1617,8 @@ body:has(.cyber-theme) {
 /* Match Summary Grid */
 .an-summary-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
 }
 .an-stat-tile {
   background: var(--surface);
@@ -1700,30 +1810,143 @@ body:has(.tv-mode) { overflow: hidden; }
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    RESPONSIVE
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
+
+/* ─── Tablet / small desktop ─── */
+@media (max-width: 900px) {
+  .game-layout {
+    grid-template-columns: 300px 1fr;
+  }
+  .an-summary-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .an-records-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ─── Mobile ─── */
 @media (max-width: 700px) {
+  /* Layout */
+  .main-content { padding: 12px 12px 80px; }
+
+  /* Game layout stacks vertically */
   .game-layout {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
   .game-topbar { grid-column: 1; }
+  .match-view-tabs { grid-column: 1; }
+
+  /* Topbar: compact on mobile */
+  .game-topbar {
+    padding: 10px 12px;
+    gap: 8px;
+  }
+  .topbar-badges { gap: 10px; overflow-x: auto; padding-bottom: 2px; }
+  .topbar-badge .label { font-size: 10px; letter-spacing: 1.5px; }
+  .topbar-badge .value { font-size: 1.2rem; }
+  .topbar-divider { height: 24px; }
+
+  /* Hide round chips in mobile LB (space saver) */
   .lb-rounds { display: none; }
-  .header-logo-text { font-size: 1.1rem; }
+
+  /* Header */
+  .header-logo-text { font-size: 1.05rem; letter-spacing: 2px; }
+  .header-inner { height: 50px; }
+
+  /* Score entry */
   .dart-inputs { flex-wrap: wrap; }
-  .quick-grid { grid-template-columns: repeat(6, 1fr); }
-  .topbar-badges { gap: 12px; }
+  .quick-grid { grid-template-columns: repeat(6, 1fr); gap: 5px; }
+  .qs { padding: 9px 2px; font-size: 15px; }
+  .big-score-input { font-size: 2.2rem; padding: 8px 6px; }
+
+  /* Player profile stats grid: 2 cols */
+  .an-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .an-stat-tile { padding: 12px 10px; }
+  .an-stat-value { font-size: 1.8rem; }
+
+  /* Analytics */
+  .an-records-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .an-pc-stats { gap: 8px; }
+  .an-mini-stat { min-width: 54px; padding: 5px 8px; }
+
+  /* Dart distribution label width fix */
+  .an-dist-label { width: 60px; font-size: 13px; }
+
+  /* Leaderboard page */
+  .lb-group-scroller { gap: 6px; }
+  .lb-group-pill { font-size: 13px; padding: 5px 12px; }
+  .lb-cat-row { padding: 10px 12px; gap: 6px; }
+  .lb-cat-btn { font-size: 13px; padding: 4px 10px; }
+  .lb-row { padding: 12px 12px; gap: 8px; }
+  .lb-total-num { font-size: 1.6rem; }
+  .lb-player-name { font-size: 15px; }
+
+  /* Page title */
+  .page-title { font-size: clamp(1.8rem, 8vw, 3rem); }
+  .page-sub { font-size: 13px; margin-bottom: 20px; }
+
+  /* Panel */
+  .panel { padding: 16px; }
+  .panel-sm { padding: 12px 14px; }
 
   /* Cyberpunk mobile overrides */
   .home-hero h1 { font-size: clamp(4rem, 18vw, 6rem); letter-spacing: 4px; }
-  .cyber-target-icon { width: 60px; height: 60px; }
-  .cyber-card-content { padding: 32px 20px; }
-  .cyber-title { font-size: 1.8rem; letter-spacing: 2px; }
-  .cyber-btn-group { flex-direction: column; width: 100%; align-items: stretch; }
-  .cyber-btn { text-align: center; }
+  .cyber-target-icon { width: 55px; height: 55px; }
+  .cyber-card-content { padding: 24px 16px; }
+  .cyber-title { font-size: 1.6rem; letter-spacing: 2px; }
+  .cyber-btn-group { flex-direction: column; width: 100%; align-items: stretch; gap: 10px; margin-top: 2vh; }
+  .cyber-btn { text-align: center; font-size: 16px; padding: 14px 20px; }
+  .cyber-sub { font-size: 14px; line-height: 1.6; }
+  .cyber-subtitle { font-size: 13px; letter-spacing: 1.5px; }
+
+  /* Admin */
+  .admin-layout { max-width: 100% !important; }
+  .tabs { flex-wrap: wrap; }
+  .tab-btn { font-size: 13px; padding: 7px 10px; }
+
+  /* Match cards */
+  .match-card { padding: 12px 14px; gap: 10px; }
+  .match-card-date { display: none; }
+
+  /* Leaderboard top toggle — stack on mobile */
+  .lb-top-header { flex-direction: column; align-items: flex-start !important; gap: 12px; }
+  .lb-time-toggle { width: 100% !important; }
+
+  /* Status badges */
+  .status-badge { font-size: 11px; padding: 2px 7px; }
+
+  /* Winner celebration */
+  .wc-trophy { font-size: clamp(4rem, 18vw, 7rem); }
 }
+
 @media (max-width: 420px) {
   .nav-link span:not(.live-dot) { display: none; }
-  .quick-grid { grid-template-columns: repeat(4, 1fr); }
-  
+  .quick-grid { grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .qs { padding: 10px 2px; }
+
   /* Cyberpunk mobile overrides */
-  .cyber-sub { font-size: 15px; padding: 12px; }
-  .home-hero p { font-size: 14px; letter-spacing: 1px; }
+  .cyber-sub { font-size: 13px; padding: 12px; }
+  .home-hero p { font-size: 13px; letter-spacing: 1px; }
+
+  /* Stat grid: single column on very small screens */
+  .an-summary-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Topbar: hide of/of labels */
+  .topbar-badge:nth-child(4),
+  .topbar-badge:nth-child(6) {
+    display: none;
+  }
+  .topbar-divider:nth-child(5),
+  .topbar-divider:nth-child(7) {
+    display: none;
+  }
 }

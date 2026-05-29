@@ -101,7 +101,24 @@ export default function MatchView({ match: matchProp, readOnly = false, onMatchF
         event: 'UPDATE', schema: 'public', table: 'matches',
         filter: `id=eq.${matchProp.id}`
       }, payload => {
-        setMatch(payload.new)
+        const updated = payload.new
+        setMatch(updated)
+        // If a viewer sees the match flip to finished, show winner celebration
+        if (readOnly && updated.status === 'finished' && !finishCalledRef.current) {
+          finishCalledRef.current = true
+          // We need to know the winner name — fetch it from matchPlayers
+          setMatchPlayers(prev => {
+            const winner = prev.find(p => p.player_id === updated.winner_player_id)
+            if (winner) {
+              setMilestone({
+                type: 'match_winner',
+                playerName: winner.name,
+                extra: null,
+              })
+            }
+            return prev
+          })
+        }
       })
       .subscribe()
 
@@ -232,17 +249,17 @@ export default function MatchView({ match: matchProp, readOnly = false, onMatchF
     // Update local match state so UI reflects finished
     setMatch(prev => ({ ...prev, status: 'finished', winner_player_id: winner?.player_id ?? null }))
 
-    // Fire winner milestone overlay
+    // Fire winner milestone overlay (full-screen celebration)
     setMilestone({
       type: 'match_winner',
       playerName: winner?.name ?? '?',
-      extra: `${winner?.total ?? 0} pts`
+      extra: `${winner?.total ?? 0} pts`,
     })
 
-    // Navigate away after winner overlay completes
+    // Navigate away after winner overlay completes (6s celebration + 1s buffer)
     setTimeout(() => {
       onMatchFinished?.()
-    }, 3500)
+    }, 7000)
 
     setFinishing(false)
   }

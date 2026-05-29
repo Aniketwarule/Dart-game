@@ -222,7 +222,7 @@ export default function Leaderboard() {
 
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+      <div className="lb-top-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>
         <div>
           <div className="page-title">LEADERBOARD</div>
           <div className="page-sub">
@@ -232,7 +232,7 @@ export default function Leaderboard() {
         </div>
         
         {/* Time Filter Toggle */}
-        <div className="toggle-group" style={{ width: 280, flexShrink: 0 }}>
+        <div className="toggle-group lb-time-toggle" style={{ width: 280, flexShrink: 0 }}>
           <button className={`toggle-btn ${timeFilter === 'lifetime' ? 'active' : ''}`} onClick={() => setTimeFilter('lifetime')}>Lifetime</button>
           <button className={`toggle-btn ${timeFilter === 'month' ? 'active' : ''}`} onClick={() => setTimeFilter('month')}>Month</button>
           <button className={`toggle-btn ${timeFilter === 'week' ? 'active' : ''}`} onClick={() => setTimeFilter('week')}>Week</button>
